@@ -1,8 +1,3 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/abKzbfrpzdQ
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
 import Link from "next/link"
 
 export default function Component() {
@@ -11,7 +6,7 @@ export default function Component() {
       <div className="mx-auto px-4 flex items-center justify-center h-14">
         <Link
           className="flex-1 flex flex-col items-center justify-center text-xs font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-          href="#"
+          href="/dashboard"
         >
           <HomeIcon className="w-5 h-5" />
           Home
@@ -25,18 +20,19 @@ export default function Component() {
         </Link>
         <Link
           className="flex-1 flex flex-col items-center justify-center text-xs font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-          href="#"
+          href="/dashboard/patients"
         >
-          <CalendarIcon className="w-5 h-5" />
-          Appointments
+          <UsersIcon className="w-5 h-5" />
+          Patients
         </Link>
         <Link
           className="flex-1 flex flex-col items-center justify-center text-xs font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
           href="#"
         >
-          <UsersIcon className="w-5 h-5" />
-          Patients
+          <CalendarIcon className="w-5 h-5" />
+          Appointments
         </Link>
+       
         <Link
           className="flex-1 flex flex-col items-center justify-center text-xs font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
           href="#"

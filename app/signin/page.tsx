@@ -83,24 +83,24 @@ export default function Page() {
           <div className="space-y-2">
             <div className="flex items-center">
               <Label htmlFor="password">Password</Label>
-              <Link className="ml-auto inline-block text-sm underline" href="#">
+              {/* <Link className="ml-auto inline-block text-sm underline" href="#">
                 Forgot your password?
-              </Link>
+              </Link> */}
             </div>
             <Input id="password" required type="password"  value={password}
           onChange={(e) => setPassword(e.target.value)} />
           </div>
-          <Button className="w-full" onClick={() => login(email, password)}>Login</Button>
-          <Button className="w-full" variant="outline" onClick={register}>
+          <Button className="w-full"  onClick={() => login(email, password)}>Login</Button>
+          {/* <Button className="w-full" variant="outline" onClick={register}>
             Login with Google
-          </Button>
+          </Button> */}
         </div>
-        <div className="text-center text-sm">
+        {/* <div className="text-center text-sm">
           Dont have an account?
           <Link className="underline" href="#">
             Sign up
           </Link>
-        </div>
+        </div> */}
       </div>
     </div>
   );
