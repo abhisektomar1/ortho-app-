@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 export default function Home() {
   const router = useRouter();
-  console.log(localStorage);
+  
   
   useEffect(() => {
     const authToken = localStorage.getItem('id');
