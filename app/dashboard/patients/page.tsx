@@ -4,11 +4,12 @@ import Layout from "../../../components/layout";
 import { databases } from "@/app/appwrite";
 import { useEffect, useState } from "react";
 import { getPatients } from "@/api/patients";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
   const [patients, setPatients] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  console.log(patients);
+  const router = useRouter();
 
   useEffect(() => {
     setLoading(true);
@@ -23,11 +24,17 @@ export default function Page() {
 
   return (
     <Layout>
-      <section className="w-full p-4 md:p-6 lg:p-8">
+      <section className="w-full p-4 md:p-6 lg:p-8 mb-10">
         <div className="grid gap-4 md:gap-6">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold">Patient List</h1>
-            <Button size="icon" variant="outline">
+            <Button
+              size="icon"
+              variant="outline"
+              onClick={() => {
+                router.push("/dashboard/addPatient");
+              }}
+            >
               <PlusIcon className="h-5 w-5" />
               <span className="sr-only">Add Patient</span>
             </Button>
@@ -134,42 +141,47 @@ export default function Page() {
                   const dateObject = new Date(patient.doj);
                   const formattedDate = dateObject.toLocaleDateString();
                   return (
-                      <div key={index}  className="grid gap-2 rounded-lg bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:bg-gray-950">
-                        <div className="flex items-center justify-between">
-                          <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                            {patient.opdNo}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <CalendarDaysIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                            <span className="text-sm text-gray-500 dark:text-gray-400">
-                              {formattedDate}
-                            </span>
-                          </div>
+                    <div
+                      key={index}
+                      className="grid gap-2 rounded-lg bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:bg-gray-950"
+                    onClick={() => {
+                      router.push(`/dashboard/${patient.$id}`);
+                    }}>
+                      <div className="flex items-center justify-between">
+                        <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                          Opd No-{patient.opdNo}
                         </div>
-                        <div className="flex items-center justify-between">
-                          <div className="font-semibold">John Doe</div>
-                          <div className="flex items-center gap-2">
-                            <PhoneIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                            <span className="text-sm text-gray-500 dark:text-gray-400">
-                            {patient.mobileNo}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <CalendarDaysIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                            <span className="text-sm text-gray-500 dark:text-gray-400">
-                            {patient.age}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <LocateIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                            <span className="text-sm text-gray-500 dark:text-gray-400">
-                            {patient.location}
-                            </span>
-                          </div>
+                        <div className="flex items-center gap-2">
+                          <CalendarDaysIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                          <span className="text-sm text-gray-500 dark:text-gray-400">
+                            {formattedDate}
+                          </span>
                         </div>
                       </div>
+                      <div className="flex items-center justify-between">
+                        <div className="font-semibold">{patient.name}</div>
+                        <div className="flex items-center gap-2">
+                          <PhoneIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                          <span className="text-sm text-gray-500 dark:text-gray-400">
+                            {patient.mobileNo}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <CalendarDaysIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                          <span className="text-sm text-gray-500 dark:text-gray-400">
+                            {patient.age}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <LocateIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                          <span className="text-sm text-gray-500 dark:text-gray-400">
+                            {patient.location}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   );
                 })}
               </>

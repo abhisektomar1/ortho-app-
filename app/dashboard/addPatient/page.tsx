@@ -6,8 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { ID, databases } from "@/app/appwrite";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 function Page() {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -25,10 +29,9 @@ function Page() {
         ID.unique(),
         data
     ); 
-    console.log(res);
-    
-      // Reset form after successful submission
-      // reset();
+    toast.success('Patient Created!!');
+       reset();
+       router.push("/dashboard/patients")
     } catch (error) {
       console.error("Error:", error);
     }
