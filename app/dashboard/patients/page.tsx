@@ -24,7 +24,7 @@ export default function Page() {
 
   return (
     <Layout>
-      <section className="w-full p-4 md:p-6 lg:p-8 mb-10">
+      <section className="w-full p-4 md:p-6 lg:p-8 mb-12">
         <div className="grid gap-4 md:gap-6">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold">Patient List</h1>
@@ -34,8 +34,9 @@ export default function Page() {
               onClick={() => {
                 router.push("/dashboard/addPatient");
               }}
+              className="dark:bg-white"
             >
-              <PlusIcon className="h-5 w-5" />
+              <PlusIcon className="h-5 w-5 "  />
               <span className="sr-only">Add Patient</span>
             </Button>
           </div>
@@ -159,7 +160,7 @@ export default function Page() {
                         </div>
                       </div>
                       <div className="flex items-center justify-between">
-                        <div className="font-semibold">{patient.name}</div>
+                        <div className="font-semibold dark:text-gray-400">{patient.name}</div>
                         <div className="flex items-center gap-2">
                           <PhoneIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                           <span className="text-sm text-gray-500 dark:text-gray-400">

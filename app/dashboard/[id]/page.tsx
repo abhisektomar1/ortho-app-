@@ -35,8 +35,9 @@ function Page({ params }: any) {
             size="icon"
             variant="outline"
             onClick={() => {
-              router.push("/dashboard/addAppointment");
+              router.push(`/dashboard/appointments/${params.id}`);
             }}
+            className="dark:bg-white"
           >
             <PlusIcon className="h-5 w-5" />
             <span className="sr-only">Add Appointment</span>
@@ -73,51 +74,21 @@ function Page({ params }: any) {
                 </thead>
                 <tbody>
                   {appointment?.map((app: any) => {
+                     const dateObject = new Date(app.date);
+                     const formattedDate = dateObject.toLocaleDateString();
                     return (
                       <>
                         <tr className="bg-white dark:bg-gray-950">
                           <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-50">
-                            April 15, 2023
+                            {formattedDate}
                           </td>
                           <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
-                            Attended the company meeting.
+                            {app.note}
                           </td>
                         </tr>
                       </>
                     );
                   })}
-                  {/* <tr className="bg-white dark:bg-gray-950">
-                    <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-50">
-                      April 15, 2023
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
-                      Attended the company meeting.
-                    </td>
-                  </tr>
-                  <tr className="bg-gray-50 dark:bg-gray-900">
-                    <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-50">
-                      April 10, 2023
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
-                      Submitted the quarterly report.
-                    </td>
-                  </tr>
-                  <tr className="bg-white dark:bg-gray-950">
-                    <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-50">
-                      April 5, 2023
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
-                      Discussed the new project plan.
-                    </td>
-                  </tr>
-                  <tr className="bg-gray-50 dark:bg-gray-900">
-                    <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-50">
-                      April 1, 2023
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
-                      Attended the team-building event.
-                    </td>
-                  </tr> */}
                 </tbody>
               </table>
             </div>
