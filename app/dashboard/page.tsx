@@ -1,15 +1,17 @@
-"use client";
+'use client';
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Layout from "../../components/layout";
 import { CardTitle, CardHeader, CardContent, Card } from "@/components/ui/card";
 import { databases } from "../appwrite";
-import { Query } from "appwrite";
+
 
 function Page() {
   const router = useRouter();
-  const patients = localStorage.getItem("patients");
+  const [patients, setPAtioents] = useState<any>()
   useEffect(() => {
+   const patients = localStorage.getItem("patients");
+   setPAtioents(patients as any)
     const authToken = localStorage.getItem("id");
     if (!authToken) {
       router.push("/");
