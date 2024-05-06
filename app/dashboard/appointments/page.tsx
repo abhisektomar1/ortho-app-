@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import Layout from "../../../components/layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 function Page() {
   const [appointments, setAppointments] = useState<any>(null);
@@ -35,15 +36,16 @@ function Page() {
     <Layout>
       <div className="px-4 py-6 md:px-6 md:py-12 mb-12">
         <div className="flex items-center justify-between mb-2 gap-1">
-          <h1 className="text-2xl font-bold">Appointments</h1>
-
+          <h1 className="text-2xl font-bold">Appointments List</h1>
+          <div>
+          <Label htmlFor="dateOfJoining">Filter by date</Label>
           <Input
             id="dateOfJoining"
             type="date"
-            className="max-w-min	"
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
           />
+          </div>
         </div>
         {loading ? (
           <>
