@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { ID, account } from "../appwrite";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function Page() {
   const router = useRouter();
@@ -18,15 +19,12 @@ export default function Page() {
     try {
       const session = await account.createEmailSession(email, password);
       localStorage.setItem("id", session.userId);
-      console.log(session, await account.get());
       setLoggedInUser(await account.get());
-      router.push('/dashboard');
-   
-    } catch (error) {
-        console.log(error);
-        alert(error)
+      router.push("/dashboard");
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error.message)
     }
-   
   };
 
   const register = async () => {
@@ -59,16 +57,6 @@ export default function Page() {
           </p>
         </div>
         <div className="space-y-4">
-        <div className="space-y-2">
-            <Label htmlFor="email">Name</Label>
-            <Input
-              id="name"
-              placeholder="Name"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -83,24 +71,20 @@ export default function Page() {
           <div className="space-y-2">
             <div className="flex items-center">
               <Label htmlFor="password">Password</Label>
-              {/* <Link className="ml-auto inline-block text-sm underline" href="#">
-                Forgot your password?
-              </Link> */}
             </div>
-            <Input id="password" required type="password"  value={password}
-          onChange={(e) => setPassword(e.target.value)} />
+            <Input
+              id="password"
+              required
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
-          <Button className="w-full"  onClick={() => login(email, password)}>Login</Button>
-          {/* <Button className="w-full" variant="outline" onClick={register}>
-            Login with Google
-          </Button> */}
+          <Button className="w-full" onClick={() => login(email, password)}>
+            Login
+          </Button>
+         
         </div>
-        {/* <div className="text-center text-sm">
-          Dont have an account?
-          <Link className="underline" href="#">
-            Sign up
-          </Link>
-        </div> */}
       </div>
     </div>
   );

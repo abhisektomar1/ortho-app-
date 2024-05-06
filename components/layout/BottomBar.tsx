@@ -1,6 +1,9 @@
+import { account } from "@/app/appwrite";
 import Link from "next/link"
+import { useRouter } from "next/navigation";
 
 export default function Component() {
+  const router = useRouter();
   return (
     <footer className="fixed inset-x-0 bottom-0 z-10 bg-white border-t border-gray-200/50 dark:bg-gray-950 dark:border-gray-950/50">
       <div className="mx-auto px-4 flex items-center justify-center h-14">
@@ -11,12 +14,19 @@ export default function Component() {
           <HomeIcon className="w-5 h-5" />
           Home
         </Link>
-        <Link
+        {/* <Link
           className="flex-1 flex flex-col items-center justify-center text-xs font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
           href="#"
         >
           <SearchIcon className="w-5 h-5" />
           Search
+        </Link> */}
+        <Link
+          className="flex-1 flex flex-col items-center justify-center text-xs font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+          href="/dashboard/appointments"
+        >
+          <CalendarIcon className="w-5 h-5" />
+          Appointments
         </Link>
         <Link
           className="flex-1 flex flex-col items-center justify-center text-xs font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
@@ -26,19 +36,16 @@ export default function Component() {
           Patients
         </Link>
         <Link
-          className="flex-1 flex flex-col items-center justify-center text-xs font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-          href="#"
-        >
-          <CalendarIcon className="w-5 h-5" />
-          Appointments
-        </Link>
-       
-        <Link
+        onClick={async () => {
+          await account.deleteSession("current"); // Delete the current session
+      localStorage.removeItem("id");
+          router.push("/signin");
+        }}
           className="flex-1 flex flex-col items-center justify-center text-xs font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
           href="#"
         >
           <SettingsIcon className="w-5 h-5" />
-          Settings
+          Logout
         </Link>
       </div>
     </footer>

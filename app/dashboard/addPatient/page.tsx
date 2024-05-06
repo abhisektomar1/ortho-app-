@@ -21,7 +21,6 @@ function Page() {
   } = useForm();
 
   const onSubmit = async (data: any) => {
-    console.log(data);
     try {
       const res = await databases.createDocument(
         "65fea4d47b9045c92723",

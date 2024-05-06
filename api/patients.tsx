@@ -1,6 +1,7 @@
 import { databases } from "@/app/appwrite";
 import { Query } from "appwrite";
 
+
 export const getPatients = async () => {
           try {
                     const response = await databases.listDocuments(

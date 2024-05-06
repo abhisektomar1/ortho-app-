@@ -3,24 +3,57 @@ import { Button } from "@/components/ui/button";
 import Layout from "../../../components/layout";
 import { databases } from "@/app/appwrite";
 import { useEffect, useState } from "react";
-import { getPatients } from "@/api/patients";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Input } from "@/components/ui/input"
+import { Query } from "appwrite";
+
 
 export default function Page() {
+  const searchParams = useSearchParams();
+  const search = searchParams.get('search');
+
   const [patients, setPatients] = useState<any>(null);
+  
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
+  
 
   useEffect(() => {
     setLoading(true);
+
     const fetchPatients = async () => {
-      const patientsData = await getPatients();
+      const patientsData = await getPatients(search); // Pass the search parameter to getPatients
       setPatients(patientsData);
+      localStorage.setItem("patients", patientsData.length as any)
       setLoading(false);
     };
 
     fetchPatients();
-  }, []);
+  }, [search]); // Include search in the dependency array
+
+  const getPatients = async (search: string | null) => {
+    try {
+      const queryOptions = [
+        Query.orderDesc('$createdAt')
+      ];
+
+      if (search) {
+        queryOptions.push(Query.search('name', search));
+      }
+
+      const response = await databases.listDocuments(
+        "65fea4d47b9045c92723",
+        "663343050009b88b486e",
+        queryOptions
+      );
+
+      return response.documents;
+    } catch (error) {
+      console.error('Error fetching patients:', error);
+      return [];
+    }
+  };                
+  
 
   return (
     <Layout>
@@ -41,6 +74,7 @@ export default function Page() {
             </Button>
           </div>
           <div className="grid gap-4">
+          
             {loading ? (
               <>
                 <div className="grid gap-2 rounded-lg bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:bg-gray-950 animate-pulse">
@@ -194,6 +228,26 @@ export default function Page() {
   );
 }
 
+
+function Search() {
+  return (
+    <>
+        <form className="flex items-center space-x-2">
+          <Input className="flex-1" placeholder="Search for anything..." type="search" />
+          <Button>
+            <SearchIcon className="h-5 w-5" />
+            <span className="sr-only">Search</span>
+          </Button>
+        </form>
+        {/* <div className="flex flex-col items-center justify-center space-y-2">
+          <SearchIcon className="h-12 w-12 text-gray-400" />
+          <p className="text-gray-500 dark:text-gray-400">No results found</p>
+        </div> */}
+        </>
+  )
+}
+
+
 function CalendarDaysIcon(props: any) {
   return (
     <svg
@@ -282,4 +336,25 @@ function PlusIcon(props: any) {
       <path d="M12 5v14" />
     </svg>
   );
+}
+
+
+function SearchIcon(props: any) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.3-4.3" />
+    </svg>
+  )
 }

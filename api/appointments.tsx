@@ -7,7 +7,7 @@ export const getAppointments = async () => {
                               "65fea4d47b9045c92723",
                               "66348ae90017d1e29976",
                               [
-                                  Query.orderDesc('$createdAt'),
+                                  Query.orderDesc('date'),
                               ]
                           );
               return response.documents;

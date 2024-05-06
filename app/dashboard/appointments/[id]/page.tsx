@@ -10,7 +10,6 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 function Page({params}: any) {
-  console.log(params);
   
   const router = useRouter();
 
@@ -23,7 +22,6 @@ function Page({params}: any) {
   } = useForm();
 
   const onSubmit = async (data: any) => {
-    console.log(data);
     try {
       const res = await databases.createDocument(
         "65fea4d47b9045c92723",
@@ -31,7 +29,6 @@ function Page({params}: any) {
         ID.unique(),
         {patients:params.id ,...data}
     ); 
-    console.log(res);
     toast.success('Appointment Created!!');
        reset();
        router.push("/dashboard/patients")

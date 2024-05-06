@@ -14,7 +14,6 @@ function Page({ params }: any) {
     (app: any) => app.patients.$id === params.id
   );
 
-  console.log(appointment);
 
   useEffect(() => {
     setLoading(true);
