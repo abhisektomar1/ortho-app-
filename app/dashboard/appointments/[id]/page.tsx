@@ -65,7 +65,7 @@ function Page({params}: any) {
               </div>
             
               <div className="space-y-2 w-full">
-                <Label htmlFor="dateOfJoining">Date of Appointment</Label>
+                <Label htmlFor="dateOfJoining">Date of Last Appointment</Label>
                 <Input id="dateOfJoining" type="date"  {...register("date", {
                     required: true,
                   })} />
