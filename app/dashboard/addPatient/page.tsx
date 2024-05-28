@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Layout from "../../../components/layout";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -8,9 +8,11 @@ import { useForm } from "react-hook-form";
 import { ID, databases } from "@/app/appwrite";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { Loader2 } from "lucide-react";
 
 function Page() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -21,18 +23,22 @@ function Page() {
   } = useForm();
 
   const onSubmit = async (data: any) => {
+    setLoading(true);
+
     try {
       const res = await databases.createDocument(
         "65fea4d47b9045c92723",
         "663343050009b88b486e",
         ID.unique(),
         data
-    ); 
-    toast.success('Patient Created!!');
-       reset();
-       router.push("/dashboard/patients")
+      );
+      toast.success("Patient Created!!");
+      reset();
+      router.push("/dashboard/patients");
     } catch (error) {
       console.error("Error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -115,9 +121,7 @@ function Page() {
                   <option value={"female"}>female</option>
                   <option value={"other"}>other</option>
                 </select>
-                {errors.sex && (
-                  <p className="text-red-800">Sex is required</p>
-                )}
+                {errors.sex && <p className="text-red-800">Sex is required</p>}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="location">Address</Label>
@@ -134,15 +138,23 @@ function Page() {
               </div>
               <div className="space-y-2 w-full">
                 <Label htmlFor="dateOfJoining">Date of Joining</Label>
-                <Input id="dateOfJoining" type="date"  {...register("doj", {
+                <Input
+                  id="dateOfJoining"
+                  type="date"
+                  {...register("doj", {
                     required: true,
-                  })} />
-                  {errors.doj && (
+                  })}
+                />
+                {errors.doj && (
                   <p className="text-red-800">date of joining is required</p>
                 )}
               </div>
               <div className="flex justify-end w-full md:col-span-2 lg:col-span-1">
-                <Button type="submit">Create Patient</Button>
+                <Button disabled={loading} type="submit">
+                  {" "}
+                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Create Patient
+                </Button>
               </div>
             </form>
           </div>

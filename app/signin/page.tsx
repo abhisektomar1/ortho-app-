@@ -7,6 +7,7 @@ import { useState } from "react";
 import { ID, account } from "../appwrite";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { Loader2 } from "lucide-react";
 
 export default function Page() {
   const router = useRouter();
@@ -14,8 +15,10 @@ export default function Page() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false)
 
   const login = async (email: any, password: any) => {
+    setLoading(true)
     try {
       const session = await account.createEmailSession(email, password);
       localStorage.setItem("id", session.userId);
@@ -24,6 +27,8 @@ export default function Page() {
     } catch (error: any) {
       console.log(error);
       toast.error(error.message)
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -80,7 +85,10 @@ export default function Page() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <Button className="w-full" onClick={() => login(email, password)}>
+          <Button disabled={loading} className="w-full" onClick={() => login(email, password)}>
+            {
+              loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
+            }
             Login
           </Button>
          

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Layout from "../../../../components/layout";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -8,10 +8,12 @@ import { useForm } from "react-hook-form";
 import { ID, databases } from "@/app/appwrite";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { Loader2 } from "lucide-react";
 
 function Page({params}: any) {
   
   const router = useRouter();
+  const [loading, setLoading] = useState(false)
 
   const {
     register,
@@ -22,6 +24,8 @@ function Page({params}: any) {
   } = useForm();
 
   const onSubmit = async (data: any) => {
+    setLoading(true)
+
     try {
       const res = await databases.createDocument(
         "65fea4d47b9045c92723",
@@ -34,6 +38,8 @@ function Page({params}: any) {
        router.push("/dashboard/patients")
     } catch (error) {
       console.error("Error:", error);
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -74,7 +80,10 @@ function Page({params}: any) {
                 )}
               </div>
               <div className="flex justify-end w-full md:col-span-2 lg:col-span-1">
-                <Button type="submit">Create Appointment</Button>
+                <Button  disabled={loading} type="submit">
+                {
+              loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
+            }Create Appointment</Button>
               </div>
             </form>
           </div>
