@@ -2,21 +2,20 @@
 import { Button } from "@/components/ui/button";
 import Layout from "../../../components/layout";
 import { databases } from "@/app/appwrite";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Input } from "@/components/ui/input"
+import { Input } from "@/components/ui/input";
 import { Query } from "appwrite";
-
+import toast from "react-hot-toast";
 
 export default function Page() {
   const searchParams = useSearchParams();
-  const search = searchParams.get('search');
+  const search = searchParams.get("search");
 
   const [patients, setPatients] = useState<any>(null);
-  
+
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
-  
 
   useEffect(() => {
     setLoading(true);
@@ -24,7 +23,7 @@ export default function Page() {
     const fetchPatients = async () => {
       const patientsData = await getPatients(search); // Pass the search parameter to getPatients
       setPatients(patientsData);
-      localStorage.setItem("patients", patientsData.length as any)
+      localStorage.setItem("patients", patientsData.length as any);
       setLoading(false);
     };
 
@@ -33,12 +32,10 @@ export default function Page() {
 
   const getPatients = async (search: string | null) => {
     try {
-      const queryOptions = [
-        Query.orderDesc('$createdAt')
-      ];
+      const queryOptions = [Query.orderDesc("$createdAt")];
 
       if (search) {
-        queryOptions.push(Query.search('name', search));
+        queryOptions.push(Query.search("name", search));
       }
 
       const response = await databases.listDocuments(
@@ -49,11 +46,56 @@ export default function Page() {
 
       return response.documents;
     } catch (error) {
-      console.error('Error fetching patients:', error);
+      console.error("Error fetching patients:", error);
       return [];
     }
-  };                
-  
+  };
+
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRefs = useRef<(HTMLDivElement | null)[]>([]);
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRefs.current.every(
+          ref => ref && !ref.contains(event.target as Node)
+        )
+      ) {
+        setOpenMenuId(null);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+  const handleMenuItemClick = (event: React.MouseEvent, url: string) => {
+    event.stopPropagation(); // Prevent the event from bubbling up
+    setOpenMenuId(null); // Close the menu
+    router.push(url); // Route to the specified URL
+  };
+
+  const handleDelete = async (id:any) => {
+    if(!id){
+      toast("no patinet for delete")
+      return
+    }
+    setLoading(true)
+    try {
+       await databases.deleteDocument(
+        "65fea4d47b9045c92723",
+        "663343050009b88b486e",
+        id
+      ); 
+      toast("deleted successfully")
+      location.reload()
+    } catch (error) {
+      console.log(error);
+    } finally{
+      setLoading(false)
+    }
+  }
 
   return (
     <Layout>
@@ -69,12 +111,11 @@ export default function Page() {
               }}
               className="dark:bg-white"
             >
-              <PlusIcon className="h-5 w-5 "  />
+              <PlusIcon className="h-5 w-5 " />
               <span className="sr-only">Add Patient</span>
             </Button>
           </div>
           <div className="grid gap-4">
-          
             {loading ? (
               <>
                 <div className="grid gap-2 rounded-lg bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:bg-gray-950 animate-pulse">
@@ -178,35 +219,71 @@ export default function Page() {
                   return (
                     <div
                       key={index}
-                      className="grid gap-2 rounded-lg bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:bg-gray-950"
-                    onClick={() => {
-                      router.push(`/dashboard/${patient.$id}`);
-                    }}>
+                      className="grid gap-2 rounded-lg bg-white p-4 shadow-lg transition-shadow hover:shadow-md dark:bg-gray-950"
+                    >
                       <div className="flex items-center justify-between">
                         <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
                           Opd No-{patient.opdNo}
                         </div>
-                        <div className="flex items-center gap-2">
-                          <CalendarDaysIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                          <span className="text-sm text-gray-500 dark:text-gray-400">
-                            {formattedDate}
-                          </span>
+                        <div className="flex items-center gap-2 relative">
+                          <ThreeDotIconVertical
+                            onClick={() =>
+                              setOpenMenuId(
+                                openMenuId === patient.$id ? null : patient.$id
+                              )
+                            }
+                          />
+                          <div
+                            ref={(el:any) => dropdownRefs.current[index] = el}
+                            className={`absolute z-10 top-5 right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 ${
+                              openMenuId === patient.$id ? "block" : "hidden"
+                            }`}
+                          >
+                            <div
+                              className="py-1"
+                              role="menu"
+                              aria-orientation="vertical"
+                              aria-labelledby="options-menu"
+                            >
+                              <div
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                role="menuitem"
+                                  onClick={(e) => handleMenuItemClick(e,`/dashboard/${patient.$id}`)}
+                              >
+                                Appointment
+                              </div>
+                              <a
+                                href="#"
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                role="menuitem"
+                                onClick={(e) => handleMenuItemClick(e,`/dashboard/updatePatient/${patient.$id}`)}
+
+                              >
+                                Edit
+                              </a>
+                              <a
+                                href="#"
+                                className="block px-4 py-2 text-sm text-red-700 hover:bg-gray-100"
+                                role="menuitem"
+                                onClick={() => handleDelete(patient.$id)}
+                              >
+                                Delete
+                              </a>
+                            </div>
+                          </div>
                         </div>
                       </div>
                       <div className="flex items-center justify-between">
-                        <div className="font-semibold dark:text-gray-400">{patient.name}</div>
-                        <div className="flex items-center gap-2">
+                        <div className="font-semibold dark:text-gray-400">
+                          {patient.name}
+                        </div>
+                       
+                      </div>
+                      <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
                           <PhoneIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                           <span className="text-sm text-gray-500 dark:text-gray-400">
                             {patient.mobileNo}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <CalendarDaysIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                          <span className="text-sm text-gray-500 dark:text-gray-400">
-                            {patient.age}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -227,26 +304,49 @@ export default function Page() {
     </Layout>
   );
 }
-
+const ThreeDotIconVertical = ({
+  width = 24,
+  height = 24,
+  color = "black",
+  ...rest
+}) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={width}
+      height={height}
+      viewBox="0 0 24 24"
+      fill={color}
+      {...rest}
+    >
+      <circle cx="12" cy="5" r="2" />
+      <circle cx="12" cy="12" r="2" />
+      <circle cx="12" cy="19" r="2" />
+    </svg>
+  );
+};
 
 function Search() {
   return (
     <>
-        <form className="flex items-center space-x-2">
-          <Input className="flex-1" placeholder="Search for anything..." type="search" />
-          <Button>
-            <SearchIcon className="h-5 w-5" />
-            <span className="sr-only">Search</span>
-          </Button>
-        </form>
-        {/* <div className="flex flex-col items-center justify-center space-y-2">
+      <form className="flex items-center space-x-2">
+        <Input
+          className="flex-1"
+          placeholder="Search for anything..."
+          type="search"
+        />
+        <Button>
+          <SearchIcon className="h-5 w-5" />
+          <span className="sr-only">Search</span>
+        </Button>
+      </form>
+      {/* <div className="flex flex-col items-center justify-center space-y-2">
           <SearchIcon className="h-12 w-12 text-gray-400" />
           <p className="text-gray-500 dark:text-gray-400">No results found</p>
         </div> */}
-        </>
-  )
+    </>
+  );
 }
-
 
 function CalendarDaysIcon(props: any) {
   return (
@@ -338,7 +438,6 @@ function PlusIcon(props: any) {
   );
 }
 
-
 function SearchIcon(props: any) {
   return (
     <svg
@@ -356,5 +455,5 @@ function SearchIcon(props: any) {
       <circle cx="11" cy="11" r="8" />
       <path d="m21 21-4.3-4.3" />
     </svg>
-  )
+  );
 }

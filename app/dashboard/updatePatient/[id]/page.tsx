@@ -1,6 +1,6 @@
 "use client";
-import React, { useState } from "react";
-import Layout from "../../../components/layout";
+import React, { useEffect, useState } from "react";
+import Layout from "../../../../components/layout";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -10,9 +10,10 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
 
-function Page() {
+function Page({ params }: any) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<any>();
 
   const {
     register,
@@ -20,24 +21,45 @@ function Page() {
     formState: { errors },
     reset,
     watch,
+    setValue,
   } = useForm();
+
+  useEffect(() => {
+    databases
+      .getDocument("65fea4d47b9045c92723", "663343050009b88b486e", params.id)
+      .then((r) => {
+        setData(r);
+        console.log(r);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, []);
+
+  useEffect(() =>{
+        setValue("name",data?.name)
+        setValue("opdNo",data?.opdNo)
+        setValue("location",data?.location)
+        setValue("sex",data?.sex)
+        setValue("mobileNo",data?.mobileNo)
+  },[data])
 
   const onSubmit = async (data: any) => {
     setLoading(true);
 
     try {
-      const res = await databases.createDocument(
+      const res = await databases.updateDocument(
         "65fea4d47b9045c92723",
         "663343050009b88b486e",
-        ID.unique(),
+        params.id,
         data
       );
-      toast.success("Patient Created!!");
+      toast.success("Patient Updated!!");
       reset();
       router.push("/dashboard/patients");
-    } catch (error:any) {
+    } catch (error: any) {
       console.error("Error:", error);
-      toast.error(error.message)
+      toast.error(error.message);
     } finally {
       setLoading(false);
     }
@@ -49,7 +71,7 @@ function Page() {
       <section className="w-full p-4 md:p-6 lg:p-8">
         <div className="grid gap-4 md:gap-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold">Create Patient</h1>
+            <h1 className="text-2xl font-bold">Update Patient</h1>
           </div>
           <div className="grid gap-4 rounded-lg bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:bg-gray-950 md:p-6 lg:p-8 mb-10">
             <form
@@ -103,10 +125,11 @@ function Page() {
                   {...register("sex", {
                     required: true,
                   })}
+                  
                 >
-                  <option value={"male"}>male</option>
-                  <option value={"female"}>female</option>
-                  <option value={"other"}>other</option>
+                  <option selected={ data?.sex === "male" ? true : false } value={"male"}>male</option>
+                  <option selected={ data?.sex === "female" ? true : false } value={"female"}>female</option>
+                  <option selected={ data?.sex === "other" ? true : false } value={"other"}>other</option>
                 </select>
                 {errors.sex && <p className="text-red-800">Sex is required</p>}
               </div>
@@ -127,7 +150,7 @@ function Page() {
                 <Button disabled={loading} type="submit">
                   {" "}
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Create Patient
+                  Update Patient
                 </Button>
               </div>
             </form>
