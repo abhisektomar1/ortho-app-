@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Query } from "appwrite";
+import toast from "react-hot-toast";
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -76,17 +77,23 @@ export default function Page() {
   };
 
   const handleDelete = async (id:any) => {
-    console.log(id);
-    
+    if(!id){
+      toast("no patinet for delete")
+      return
+    }
+    setLoading(true)
     try {
        await databases.deleteDocument(
         "65fea4d47b9045c92723",
         "663343050009b88b486e",
         id
       ); 
+      toast("deleted successfully")
+      location.reload()
     } catch (error) {
       console.log(error);
-      
+    } finally{
+      setLoading(false)
     }
   }
 
