@@ -32,7 +32,7 @@ export default function Page() {
 
   const getPatients = async (search: string | null) => {
     try {
-      const queryOptions = [Query.orderDesc("$createdAt")];
+      const queryOptions = [Query.orderDesc("$createdAt"),Query.limit(1000)];
 
       if (search) {
         queryOptions.push(Query.search("name", search));
